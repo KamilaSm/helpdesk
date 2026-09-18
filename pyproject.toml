@@ -16,6 +16,7 @@ dependencies = [
   "python-jose[cryptography]",
   "passlib[bcrypt]",
   "psycopg2-binary",
+  "email-validator",
 ]
 
 [tool.hatch.build.targets.wheel]
