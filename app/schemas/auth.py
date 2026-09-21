@@ -24,3 +24,8 @@ class UserOut(BaseModel):
     org_id: int
 
     model_config = {"from_attributes": True}
+
+
+class InviteRequest(BaseModel):
+    email: EmailStr
+    password: str
