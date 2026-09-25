@@ -1,3 +1,5 @@
+from app.models.status_log import StatusLog
+from app.services.ticket_status import is_transition_allowed
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -82,6 +84,25 @@ async def update_ticket(
     ticket = await get_ticket_or_404(ticket_id, current_user.org_id, db)
 
     update_data = data.model_dump(exclude_unset=True)
+
+    if "status" in update_data:
+        new_status = update_data["status"]
+        old_status = ticket.status
+
+        if not is_transition_allowed(old_status, new_status):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Cannot transition from '{old_status}' to '{new_status}'",
+            )
+        if old_status != new_status:
+            log_entry = StatusLog(
+                ticket_id=ticket.id,
+                changed_by=current_user.id,
+                old_status=old_status,
+                new_status=new_status,
+            )
+            db.add(log_entry)
+
     for field, value in update_data.items():
         setattr(ticket, field, value)
 
