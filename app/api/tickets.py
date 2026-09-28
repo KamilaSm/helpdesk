@@ -9,7 +9,7 @@ from app.database import get_db
 from app.models.user import User
 from app.models.ticket import Ticket
 from app.schemas.tickets import TicketCreate, TicketUpdate, TicketOut
-from app.dependencies import get_current_user
+from app.dependencies import get_current_user, check_ticket_limit
 
 router = APIRouter()
 
@@ -24,7 +24,8 @@ async def get_ticket_or_404(ticket_id: int, org_id: int, db: AsyncSession) -> Ti
     return ticket
 
 
-@router.post("", response_model=TicketOut, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=TicketOut, status_code=status.HTTP_201_CREATED,
+             dependencies=[Depends(check_ticket_limit)])
 async def create_ticket(
     data: TicketCreate,
     current_user: User = Depends(get_current_user),

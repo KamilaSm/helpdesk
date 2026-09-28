@@ -8,5 +8,5 @@ class Plan(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(50), unique=True)
-    ticket_list: Mapped[int] = mapped_column(Integer)
+    ticket_limit: Mapped[int] = mapped_column(Integer)
     price: Mapped[int] = mapped_column(Integer)

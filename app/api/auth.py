@@ -9,6 +9,7 @@ from app.models.organization import Organization
 from app.schemas.auth import RegisterRequest, LoginRequest, Token, UserOut
 from app.security import hash_password, verify_password, create_access_token
 from app.dependencies import get_current_user
+from app.models.plan import Plan
 
 router = APIRouter()
 
@@ -27,8 +28,8 @@ async def register(data: RegisterRequest, db: AsyncSession = Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered",
         )
-
-    org = Organization(name=data.org_name, slug=slugify(data.org_name))
+    free_plan = (await db.execute(select(Plan).where(Plan.name == "Free"))).scalar_one()
+    org = Organization(name=data.org_name, slug=slugify(data.org_name), plan_id=free_plan.id)
     db.add(org)
     await db.flush()  # чтобы получить org.id до commit
 
