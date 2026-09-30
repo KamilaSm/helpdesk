@@ -17,6 +17,7 @@ dependencies = [
   "passlib[bcrypt]",
   "psycopg2-binary",
   "email-validator",
+  "apscheduler",
 ]
 
 [tool.hatch.build.targets.wheel]

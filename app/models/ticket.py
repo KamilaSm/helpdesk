@@ -1,7 +1,8 @@
 from datetime import datetime
-from sqlalchemy import Integer, String, ForeignKey, DateTime, Text, func
+from sqlalchemy import Integer, String, ForeignKey, DateTime, Text, func, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
+
 
 class Ticket(Base):
     __tablename__ = 'tickets'
@@ -15,3 +16,4 @@ class Ticket(Base):
     assignee_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('users.id'), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime | None] = mapped_column(DateTime, onupdate=func.now())
+    is_escalated: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
